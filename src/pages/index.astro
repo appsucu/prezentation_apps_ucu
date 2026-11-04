@@ -1,0 +1,61 @@
+---
+import '../styles/global.css';
+import Slide from '../components/Slide.astro';
+import Overview from '../components/Overview.astro';
+import { getSlides } from '../lib/slides';
+
+const slides = await getSlides();
+const total = slides.length;
+const first = slides[0].data;
+---
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#70278c" />
+    <meta name="description" content="презентація Факультету прикладних наук УКУ: програми, дослідження та можливості." />
+    <meta property="og:title" content="APPS.UCU — факультет прикладних наук" />
+    <meta property="og:description" content="Освіта, дослідження та спільнота APPS.UCU" />
+    <title>APPS.UCU — Факультет прикладних наук</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="#/slide/1" aria-label="APPS.UCU — на початок">
+        <img src="assets/main/logo.svg" alt="Український католицький університет та Факультет прикладних наук" />
+      </a>
+      <div class="top-right">
+        <span class="top-caption">ПРЕЗЕНТАЦІЯ ФАКУЛЬТЕТУ <span> / УКУ</span></span>
+        <button id="overviewButton" class="menu" aria-expanded="false" aria-controls="overview">
+          <span class="gridicon">▦</span> Зміст
+        </button>
+      </div>
+    </header>
+    <main id="main">
+      <div id="slide" aria-live="polite">
+        {slides.map((entry, index) => <Slide entry={entry} index={index} total={total} />)}
+      </div>
+    </main>
+    <footer class="bottom">
+      <div class="progress" aria-hidden="true"><div id="progressBar" style={`width:${100 / total}%`}></div></div>
+      <div class="footer-left">
+        <span class="status-dot"></span>
+        <span id="sectionLabel">{first.section.toUpperCase()}</span>
+        <span class="footer-separator">/</span>
+        <span>APPS.UCU</span>
+      </div>
+      <div class="controls">
+        <button id="prev" aria-label="Попередній слайд" disabled>←</button>
+        <span id="counter" class="counter">{`01 / ${total}`}</span>
+        <button id="next" aria-label="Наступний слайд">→</button>
+      </div>
+      <button id="fullscreen" class="fullscreen" aria-label="Повноекранний режим" title="Повноекранний режим">⛶</button>
+    </footer>
+    <Overview slides={slides} />
+    <script>
+      import { initDeck } from '../scripts/deck';
+      initDeck();
+    </script>
+  </body>
+</html>

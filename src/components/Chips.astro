@@ -1,0 +1,17 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { items: NonNullable<CollectionEntry<'slides'>['data']['chips']> }
+const { items } = Astro.props;
+---
+<div class="chips">
+  {items.map((c) =>
+    typeof c === 'string' ? (
+      <div class="chip">{c}</div>
+    ) : (
+      <div class:list={['chip', c.logo && 'chip-logo']}>
+        {c.text && <span>{c.text}</span>}
+        {c.logo && <img src={c.logo} alt={c.text ?? ''} loading="lazy" />}
+      </div>
+    ),
+  )}
+</div>

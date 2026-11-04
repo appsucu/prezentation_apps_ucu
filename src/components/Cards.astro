@@ -1,0 +1,15 @@
+---
+interface Props { items: string[]; stat?: boolean }
+const { items, stat } = Astro.props;
+const html = (s: string) =>
+  s.replace(/&/g, '&amp;')
+   .replace(/</g, '&lt;')
+   .replace(/>/g, '&gt;')
+   .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+---
+<div class:list={['cards', stat && 'cards-stat']}>{items.map((c) => {
+  const i = stat ? c.indexOf('·') : -1;
+  return i > 0
+    ? <div class="card stat"><span class="stat-value" set:html={html(c.slice(0, i).trim())} /><span class="stat-label" set:html={html(c.slice(i + 1).trim())} /></div>
+    : <div class="card"><span set:html={html(c)} /></div>;
+})}</div>

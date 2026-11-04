@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# misc
+.DS_Store
+*.log
+.vercel
+.env*

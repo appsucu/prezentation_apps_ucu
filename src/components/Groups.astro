@@ -1,0 +1,13 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { groups: NonNullable<CollectionEntry<'slides'>['data']['groups']> }
+const { groups } = Astro.props;
+---
+<div class="groups">
+  {groups.map((g) => (
+    <div class:list={['group', g.accent && `group-${g.accent}`]}>
+      <div class="group-head">{g.heading}</div>
+      <div class="group-items">{g.items.map((i) => <div class="group-item">{i}</div>)}</div>
+    </div>
+  ))}
+</div>

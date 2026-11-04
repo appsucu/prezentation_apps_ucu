@@ -1,0 +1,16 @@
+---
+interface Props { groups: { heading: string; logos: (string | { src: string; h: number })[] }[] }
+const { groups } = Astro.props;
+---
+<div class="logo-groups">
+  {groups.map((g) => (
+    <div class="lg">
+      <div class="lg-head"><span class="lg-title">{g.heading}</span></div>
+      <div class="lg-logos">{g.logos.map((l) =>
+        typeof l === 'string'
+          ? <img src={l} alt="" loading="lazy" />
+          : <img src={l.src} alt="" loading="lazy" style={`max-height:${l.h}px`} />
+      )}</div>
+    </div>
+  ))}
+</div>

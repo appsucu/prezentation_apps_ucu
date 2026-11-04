@@ -1,0 +1,7 @@
+---
+interface Props { items: string[] }
+const { items } = Astro.props;
+---
+<div class="slide-logos">
+  {items.map((l) => <img src={l} alt="" loading="lazy" />)}
+</div>

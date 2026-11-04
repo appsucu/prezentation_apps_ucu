@@ -1,0 +1,13 @@
+---
+import type { CollectionEntry } from 'astro:content';
+interface Props { pin: NonNullable<CollectionEntry<'slides'>['data']['pin']> }
+const { pin } = Astro.props;
+const side = pin.side ?? (pin.x <= 0.45 ? 'right' : 'left');
+---
+<a
+  class:list={['map-pin', `pin-${side}`]}
+  href={pin.url}
+  target="_blank"
+  rel="noopener noreferrer"
+  style={`--x:${pin.x};--y:${pin.y};--ar:${pin.ar};--line:${pin.line ?? 0}`}
+><span class="pin-title">{pin.label}</span><span class="pin-sub">{pin.sub}</span></a>

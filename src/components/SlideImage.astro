@@ -1,0 +1,26 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import MapPin from './MapPin.astro';
+interface Props {
+  src: string | string[];
+  alt?: string;
+  fit?: 'contain';
+  pin?: CollectionEntry<'slides'>['data']['pin'];
+  credit?: string;
+  lazy?: boolean;
+}
+const { src, alt = '', fit, pin, credit, lazy } = Astro.props;
+const srcs = Array.isArray(src) ? src : [src];
+const creditHtml = credit
+  ?.replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+  .replace(/\n/g, '<br>');
+---
+<div class:list={['slide-image', fit === 'contain' && 'fit-contain', srcs.length > 1 && 'multi']}>
+  {srcs.map((s, i) => <img src={s} alt={i === 0 ? alt : ''} decoding="async" loading={lazy ? 'lazy' : undefined} />)}
+  {pin && <MapPin pin={pin} />}
+  {credit && <p class="image-credit" set:html={creditHtml} />}
+  <a class="image-label" href="https://apps.ucu.edu.ua" target="_blank" rel="noopener noreferrer">APPS.UCU ↗</a>
+</div>

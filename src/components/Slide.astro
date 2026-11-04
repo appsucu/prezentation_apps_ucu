@@ -1,0 +1,40 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { pad } from '../lib/slides';
+import Cards from './Cards.astro';
+import Chips from './Chips.astro';
+import Groups from './Groups.astro';
+import SlideLinks from './SlideLinks.astro';
+import SlideImage from './SlideImage.astro';
+import Logos from './Logos.astro';
+import LogoGroups from './LogoGroups.astro';
+
+interface Props { entry: CollectionEntry<'slides'>; index: number; total: number }
+const { entry, index, total } = Astro.props;
+const s = entry.data;
+const { Content } = await render(entry);
+---
+<article
+  class:list={['slide', s.type === 'hero' && 'hero', s.image && 'has-image']}
+  aria-label={`Слайд ${index + 1} з ${total}`}
+  data-title={s.title}
+  data-section={s.section}
+  data-page={s.page}
+  hidden={index !== 0}
+>
+  <div class:list={['slide-copy', s.logos && 'has-logos']}>
+    <div class="eyebrow">{`${s.section.toUpperCase()} \u00a0 / \u00a0 ${pad(index + 1)}`}</div>
+    <h1>{s.title}</h1>
+    <div class="lead"><Content /></div>
+    {s.cards && <Cards items={s.cards} />}
+    {s.stats && <Cards items={s.stats} stat />}
+    {s.dou && s.dou.map((d) => <img class="dou-img" src={d} alt="" aria-hidden="true" />)}
+    {s.chips && <Chips items={s.chips} />}
+    {s.groups && <Groups groups={s.groups} />}
+    {s.logogroups && <LogoGroups groups={s.logogroups} />}
+    {s.links && <SlideLinks links={s.links} />}
+    {s.note && <p class="note">{s.note}</p>}
+    {s.logos && <Logos items={s.logos} />}
+  </div>
+  {s.image && <SlideImage src={s.image} alt={s.title} fit={s.fit} pin={s.pin} credit={s.credit} lazy={index !== 0} />}
+</article>

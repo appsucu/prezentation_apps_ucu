@@ -1,0 +1,30 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { pad } from '../lib/slides';
+interface Props { slides: CollectionEntry<'slides'>[] }
+const { slides } = Astro.props;
+---
+<div id="overview" class="overlay" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="overviewTitle">
+    <div class="panel-head">
+      <div>
+        <span class="eyebrow">НАВІГАЦІЯ</span>
+        <h2 id="overviewTitle">Зміст презентації<span class="green">.</span></h2>
+      </div>
+      <button id="closeOverview" class="close" aria-label="Закрити зміст">×</button>
+    </div>
+    <p>Оберіть слайд, щоб перейти до потрібної теми.</p>
+    <nav id="slideList" aria-label="Слайди презентації">
+      {slides.map((s, i) => (
+        <Fragment>
+          {(i === 0 || slides[i - 1].data.section !== s.data.section) && (
+            <h3 class="list-section">{s.data.section}</h3>
+          )}
+          <a class="slide-item" href={`#/slide/${i + 1}`} aria-current={i === 0 ? 'true' : undefined}>
+            <span>{pad(i + 1)}</span>{s.data.title}
+          </a>
+        </Fragment>
+      ))}
+    </nav>
+  </div>
+</div>
