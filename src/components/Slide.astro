@@ -16,6 +16,7 @@ const s = entry.data;
 const { Content } = await render(entry);
 const isHero = s.type === 'hero';
 const isStack = s.layout === 'stack';
+const isCenter = s.layout === 'center';
 const isMinimalCopy = !s.cards && !s.stats && !s.chips && !s.groups && !s.logogroups && !s.logos && !s.ranking;
 const formatInline = (text: string) =>
   text
@@ -50,13 +51,14 @@ const formatTitle = (title: string, hero: boolean) => {
   class:list={[
     'slide w-full h-full animate-[appear_0.23s_ease]',
     isHero
-      ? 'hero relative flex flex-col bg-dark text-white overflow-hidden'
+      ? 'hero relative flex flex-col bg-dark text-white overflow-hidden' + (isCenter ? ' hero-center' : '')
       : isStack && s.image
         ? 'has-image layout-stack flex flex-col overflow-y-auto overflow-x-hidden md:grid md:grid-cols-1 md:grid-rows-[auto_minmax(220px,1fr)] md:items-stretch md:overflow-hidden'
         : s.image
           ? 'has-image flex flex-col overflow-y-auto overflow-x-hidden md:grid md:grid-cols-[1.12fr_0.88fr] md:grid-rows-[minmax(0,1fr)] md:items-stretch md:overflow-hidden'
           : 'flex flex-col overflow-y-auto overflow-x-hidden md:overflow-hidden',
-    isMinimalCopy && !isHero && 'is-minimal-copy'
+    isMinimalCopy && !isHero && !isCenter && 'is-minimal-copy',
+    isCenter && 'layout-center'
   ]}
   aria-label={`Слайд ${index + 1} з ${total}`}
   data-title={s.title}
@@ -67,7 +69,9 @@ const formatTitle = (title: string, hero: boolean) => {
   <div class:list={[
     'slide-copy relative flex flex-col box-border min-h-0',
     isHero
-      ? 'z-10 flex-1 justify-center px-6 sm:px-10 md:px-[clamp(40px,6vw,96px)] pt-6 pb-[clamp(64px,13vh,140px)] text-white'
+      ? (isCenter
+          ? 'z-10 flex-1 justify-center items-center text-center px-4 sm:px-8 md:px-[clamp(32px,5vw,72px)] py-6 text-white overflow-y-auto'
+          : 'z-10 flex-1 justify-center px-6 sm:px-10 md:px-[clamp(40px,6vw,96px)] pt-6 pb-[clamp(64px,13vh,140px)] text-white')
       : isStack
         ? 'w-full shrink-0 px-5 sm:px-8 pt-5 pb-4 md:px-[clamp(32px,5vw,80px)] md:py-[clamp(12px,2vh,24px)] md:border-b md:border-line'
         : 'w-full shrink-0 px-5 sm:px-8 pt-6 pb-5 md:h-full md:max-h-full md:overflow-y-auto md:px-[clamp(32px,4.8vw,76px)] md:py-[clamp(14px,2.4vh,36px)]',
@@ -77,13 +81,15 @@ const formatTitle = (title: string, hero: boolean) => {
   ]}>
     <div class:list={[
       'slide-copy-inner my-auto w-full flex flex-col',
-      (!s.image || isStack) && !isHero && (isStack ? 'max-w-[1440px] mx-auto' : 'max-w-[1120px] mx-auto'),
-      isMinimalCopy && !isHero && 'max-md:items-center max-md:text-center md:py-4'
+      isCenter && 'items-center text-center max-w-[1020px] mx-auto',
+      (!s.image || isStack) && !isHero && !isCenter && (isStack ? 'max-w-[1440px] mx-auto' : 'max-w-[1120px] mx-auto'),
+      isMinimalCopy && !isHero && !isCenter && 'max-md:items-center max-md:text-center md:py-4'
     ]}>
       <div class:list={[
         'eyebrow flex items-center gap-2.5 sm:gap-3 text-[10px] sm:text-[11px] tracking-[0.16em] font-extrabold uppercase mb-1.5 sm:mb-2',
         isHero ? 'text-[#e8d8ef]' : 'text-purple',
-        isMinimalCopy && !isHero && 'max-md:justify-center'
+        isCenter && 'justify-center mx-auto',
+        isMinimalCopy && !isHero && !isCenter && 'max-md:justify-center'
       ]}>
         <span class="w-[22px] sm:w-[26px] h-[3px] bg-green shrink-0"></span>
         <span>{`${s.section.toUpperCase()} \u00a0 / \u00a0 ${pad(index + 1)}`}</span>
@@ -93,7 +99,9 @@ const formatTitle = (title: string, hero: boolean) => {
         class:list={[
           'font-display font-extrabold tracking-[-0.03em] leading-[1.08] text-balance my-[clamp(6px,1vh,12px)]',
           isHero
-            ? 'text-white text-[clamp(2.2rem,5.2vw,5.2rem)] max-w-[820px]'
+            ? (isCenter
+                ? 'text-white text-[clamp(2.1rem,4.4vw,4.2rem)] max-w-[900px] text-center mx-auto'
+                : 'text-white text-[clamp(2.2rem,5.2vw,5.2rem)] max-w-[820px]')
             : isMinimalCopy
               ? 'text-ink text-[clamp(2rem,4vw,4rem)] max-w-[820px]'
               : 'text-ink text-[1.5rem] sm:text-[1.9rem] md:text-[clamp(1.7rem,min(2.9vw,4.4vh),3rem)] max-w-[880px]'
@@ -104,16 +112,19 @@ const formatTitle = (title: string, hero: boolean) => {
       <div class:list={[
         'lead leading-[1.52] max-w-[680px] text-pretty empty:hidden [&_p]:m-0 [&_p+p]:mt-2 [&_strong]:font-bold',
         isHero
-          ? 'text-white/95 font-semibold text-[1.05rem] sm:text-[clamp(1.1rem,1.4vw,1.4rem)] [&_strong]:text-green'
+          ? (isCenter
+              ? 'text-white/95 font-medium text-[clamp(0.95rem,1.2vw,1.15rem)] max-w-[760px] text-center mx-auto [&_strong]:text-green'
+              : 'text-white/95 font-semibold text-[1.05rem] sm:text-[clamp(1.1rem,1.4vw,1.4rem)] [&_strong]:text-green')
           : isMinimalCopy
             ? 'text-[#4a515c] font-medium text-[1.05rem] sm:text-[clamp(1.1rem,1.4vw,1.35rem)] [&_strong]:text-ink'
-            : 'text-[#4a515c] font-normal text-[0.9rem] sm:text-[0.96rem] md:text-[clamp(0.9rem,min(1.04vw,1.7vh),1.1rem)] [&_strong]:text-ink'
+            : 'text-[#4a515c] font-normal text-[0.9rem] sm:text-[0.96rem] md:text-[clamp(0.9rem,min(1.04vw,1.7vh),1.1rem)] [&_strong]:text-ink',
+        isCenter && 'text-center mx-auto'
       ]}>
         <Content />
       </div>
 
-      {s.cards && <Cards items={s.cards} />}
-      {s.stats && <Cards items={s.stats} stat />}
+      {s.cards && <Cards items={s.cards} hero={isHero} centered={isCenter} />}
+      {s.stats && <Cards items={s.stats} stat hero={isHero} centered={isCenter} />}
       {s.ranking && <RankingTable ranking={s.ranking} />}
       {s.dou && s.dou.map((d) => (
         <img
@@ -126,7 +137,7 @@ const formatTitle = (title: string, hero: boolean) => {
       {s.chips && <Chips items={s.chips} />}
       {s.groups && <Groups groups={s.groups} />}
       {s.logogroups && <LogoGroups groups={s.logogroups} />}
-      {s.links && <SlideLinks links={s.links} hero={isHero} />}
+      {s.links && <SlideLinks links={s.links} hero={isHero} centered={isCenter} />}
       {s.note && (
         <p
           class="note text-[11px] sm:text-xs text-muted mt-[clamp(10px,1.5vh,18px)] pt-2.5 border-t border-[#d9dce0] leading-relaxed max-w-[760px] [&_strong]:font-bold [&_strong]:text-ink"

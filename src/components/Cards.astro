@@ -1,6 +1,6 @@
 ---
-interface Props { items: string[]; stat?: boolean }
-const { items, stat } = Astro.props;
+interface Props { items: string[]; stat?: boolean; hero?: boolean; centered?: boolean }
+const { items, stat, hero = false, centered = false } = Astro.props;
 const html = (s: string) =>
   s.replace(/&/g, '&amp;')
    .replace(/<br\s*\/?>/gi, '___BR___')
@@ -12,12 +12,24 @@ const html = (s: string) =>
    .replace(/(?:^|\s+)\/n(?:\s+|$)/g, '<br>');
 ---
 <div class:list={[
-  'cards grid grid-cols-1 sm:grid-cols-2 w-full max-w-[980px] mt-[clamp(10px,1.5vh,20px)]',
-  stat ? 'cards-stat gap-2 sm:gap-2.5' : 'gap-x-[clamp(18px,2.2vw,32px)] gap-y-0.5'
+  'cards w-full mt-[clamp(12px,2vh,24px)]',
+  centered
+    ? 'grid grid-cols-1 md:grid-cols-3 gap-3.5 max-w-[960px] mx-auto'
+    : stat
+      ? 'cards-stat grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-2.5 max-w-[980px]'
+      : 'grid grid-cols-1 sm:grid-cols-2 gap-x-[clamp(18px,2.2vw,32px)] gap-y-0.5 max-w-[980px]'
 ]}>
   {items.map((c, idx) => {
     const i = c.indexOf('·');
     if (stat && i > 0) {
+      if (hero || centered) {
+        return (
+          <div class="card stat px-4 py-3.5 rounded-xl border border-white/20 bg-white/10 backdrop-blur-md flex flex-col items-center justify-center text-center gap-1.5 transition-all hover:bg-white/[0.16] hover:border-green/50">
+            <span class="stat-value font-display text-[clamp(1.35rem,2.1vw,1.85rem)] font-extrabold tracking-tight leading-none text-green" set:html={html(c.slice(0, i).trim())} />
+            <span class="stat-label text-[clamp(0.78rem,0.88vw,0.88rem)] font-medium text-white/90 leading-snug" set:html={html(c.slice(i + 1).trim())} />
+          </div>
+        );
+      }
       const isGreen = idx % 2 === 1;
       return (
         <div class:list={[

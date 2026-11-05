@@ -658,12 +658,29 @@
 }
 
 /* Subtle top-left shading that preserves the bright green line at the bottom of 01.png */
-.hero .slide-image:after {
+.hero:not(.hero-center) .slide-image:after {
   content: '';
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse 80% 70% at 18% 38%, rgba(41, 22, 54, 0.55) 0%, rgba(41, 22, 54, 0.2) 55%, transparent 80%);
   pointer-events: none;
+}
+
+/* ── Centered Hero Slide (Slide 29: Photo Background + Centered Composition) ── */
+.hero.hero-center .slide-image>img {
+  object-position: center 30%;
+}
+
+.hero.hero-center .slide-image:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(20, 10, 32, 0.74) 0%, rgba(14, 16, 28, 0.84) 48%, rgba(10, 12, 20, 0.90) 100%);
+  pointer-events: none;
+}
+
+.hero.hero-center .image-label {
+  display: none;
 }
 
 /* ── Badges inside Slide Image (Credit & APPS.UCU link — Flat Style) ── */

@@ -1,8 +1,11 @@
 ---
-interface Props { links: { label: string; url: string }[]; hero?: boolean }
-const { links, hero } = Astro.props;
+interface Props { links: { label: string; url: string }[]; hero?: boolean; centered?: boolean }
+const { links, hero = false, centered = false } = Astro.props;
 ---
-<div class="flex flex-wrap gap-2.5 sm:gap-3 mt-[clamp(14px,2.2vh,24px)] w-full sm:w-auto">
+<div class:list={[
+  'flex flex-wrap gap-2.5 sm:gap-3 mt-[clamp(14px,2.2vh,24px)] w-full sm:w-auto',
+  centered && 'justify-center mx-auto'
+]}>
   {links.map((l) => (
     <a
       class:list={[
