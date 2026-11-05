@@ -1,0 +1,436 @@
+---
+interface Props {
+  card1: string;
+  card2: string;
+  lazy?: boolean;
+}
+
+const { card1, card2, lazy = false } = Astro.props;
+---
+
+<div class="alumni-cases-root" data-cases-root>
+  {/* Header: Track Badge & Interactive Switch Pills */}
+  <div class="alumni-header-bar">
+    <div class="alumni-track-pill" aria-label="Програма IT та аналітика рішень">
+      <span class="alumni-crest-dot" aria-hidden="true"></span>
+      <span class="alumni-track-name">IT&DA</span>
+      <span class="alumni-pill-divider" aria-hidden="true">/</span>
+      <span class="alumni-track-sub">Кейси випускників</span>
+    </div>
+
+    {/* Quick Person Switchers */}
+    <div class="alumni-person-pills" role="tablist" aria-label="Вибір кейсу">
+      <button
+        type="button"
+        class="person-pill is-active"
+        data-case-btn="pavlo"
+        role="tab"
+        aria-selected="true"
+        aria-controls="case-card-pavlo"
+      >
+        <span class="person-pill-avatar bg-[#294838] text-white">ПБ</span>
+        <span>Павло Бриляк</span>
+      </button>
+      <button
+        type="button"
+        class="person-pill"
+        data-case-btn="iryna"
+        role="tab"
+        aria-selected="false"
+        aria-controls="case-card-iryna"
+      >
+        <span class="person-pill-avatar bg-[#7a1d26] text-white">ІП</span>
+        <span>Ірина Попович</span>
+      </button>
+    </div>
+  </div>
+
+  {/* Stage: 2 Interactive Profile Cards */}
+  <div class="alumni-stage">
+    {/* Card 1: Pavlo Bryliak */}
+    <figure
+      id="case-card-pavlo"
+      class="alumni-case-card card-pavlo is-focused"
+      data-case-card="pavlo"
+      tabindex="0"
+      aria-label="Кейс Павла Бриляка: Senior Data Analyst у Readdle"
+    >
+      <div class="case-badge-pill badge-readdle">
+        <span class="badge-dot dot-readdle" aria-hidden="true"></span>
+        <span>Readdle · Petcube · JustAnswer</span>
+      </div>
+      <div class="case-card-inner">
+        <img
+          src={card1}
+          alt="Павло Бриляк — Senior Data Analyst у Readdle, Product Analyst у Petcube та JustAnswer"
+          class="case-card-img"
+          loading={lazy ? 'lazy' : 'eager'}
+          decoding="sync"
+        />
+      </div>
+    </figure>
+
+    {/* Card 2: Iryna Popovych */}
+    <figure
+      id="case-card-iryna"
+      class="alumni-case-card card-iryna"
+      data-case-card="iryna"
+      tabindex="0"
+      aria-label="Кейс Ірини Попович: Голова фонду Dzyga's Paw"
+    >
+      <div class="case-badge-pill badge-dzyga">
+        <span class="badge-dot dot-dzyga" aria-hidden="true"></span>
+        <span>Dzyga's Paw · $2,700,000+</span>
+      </div>
+      <div class="case-card-inner">
+        <img
+          src={card2}
+          alt="Ірина Попович — Голова фонду Dzyga's Paw, Paris School of Economics, JustAnswer"
+          class="case-card-img"
+          loading={lazy ? 'lazy' : 'eager'}
+          decoding="sync"
+        />
+      </div>
+    </figure>
+  </div>
+</div>
+
+<script>
+  function setupAlumniCases() {
+    const roots = document.querySelectorAll<HTMLElement>('[data-cases-root]');
+    roots.forEach((root) => {
+      const btnPavlo = root.querySelector<HTMLButtonElement>('[data-case-btn="pavlo"]');
+      const btnIryna = root.querySelector<HTMLButtonElement>('[data-case-btn="iryna"]');
+      const cardPavlo = root.querySelector<HTMLElement>('[data-case-card="pavlo"]');
+      const cardIryna = root.querySelector<HTMLElement>('[data-case-card="iryna"]');
+
+      if (!cardPavlo || !cardIryna) return;
+
+      function focusCard(who: 'pavlo' | 'iryna') {
+        if (who === 'pavlo') {
+          cardPavlo?.classList.add('is-focused');
+          cardIryna?.classList.remove('is-focused');
+          btnPavlo?.classList.add('is-active');
+          btnPavlo?.setAttribute('aria-selected', 'true');
+          btnIryna?.classList.remove('is-active');
+          btnIryna?.setAttribute('aria-selected', 'false');
+        } else {
+          cardIryna?.classList.add('is-focused');
+          cardPavlo?.classList.remove('is-focused');
+          btnIryna?.classList.add('is-active');
+          btnIryna?.setAttribute('aria-selected', 'true');
+          btnPavlo?.classList.remove('is-active');
+          btnPavlo?.setAttribute('aria-selected', 'false');
+        }
+      }
+
+      btnPavlo?.addEventListener('click', () => focusCard('pavlo'));
+      btnIryna?.addEventListener('click', () => focusCard('iryna'));
+
+      cardPavlo.addEventListener('pointerenter', () => focusCard('pavlo'));
+      cardIryna.addEventListener('pointerenter', () => focusCard('iryna'));
+
+      cardPavlo.addEventListener('focus', () => focusCard('pavlo'));
+      cardIryna.addEventListener('focus', () => focusCard('iryna'));
+    });
+  }
+
+  // Setup on page load and astro page loads
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupAlumniCases);
+  } else {
+    setupAlumniCases();
+  }
+</script>
+
+<style>
+  .alumni-cases-root {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    overflow: hidden;
+    padding: clamp(14px, 2vh, 24px) clamp(16px, 2vw, 28px);
+    box-sizing: border-box;
+  }
+
+  /* ── Header Bar ── */
+  .alumni-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: clamp(10px, 1.4vh, 16px);
+    z-index: 10;
+  }
+
+  .alumni-track-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    border-radius: 9999px;
+    box-shadow: none;
+  }
+
+  .alumni-crest-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: var(--color-green);
+  }
+
+  .alumni-track-name {
+    font-family: var(--font-display);
+    font-size: clamp(0.72rem, 0.82vw, 0.82rem);
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    color: var(--color-ink);
+  }
+
+  .alumni-pill-divider {
+    color: var(--color-muted);
+    font-weight: 300;
+    font-size: 11px;
+  }
+
+  .alumni-track-sub {
+    font-size: clamp(0.7rem, 0.8vw, 0.78rem);
+    font-weight: 600;
+    color: var(--color-purple);
+  }
+
+  /* ── Switcher Pills ── */
+  .alumni-person-pills {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    padding: 3px;
+    border: 1px solid var(--color-line);
+    border-radius: 9999px;
+    box-shadow: none;
+  }
+
+  .person-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 4px;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-display);
+    font-size: clamp(0.68rem, 0.78vw, 0.76rem);
+    font-weight: 700;
+    color: var(--color-muted);
+    transition: all 0.2s ease;
+  }
+
+  .person-pill:hover {
+    color: var(--color-ink);
+    background: #f1f5f9;
+  }
+
+  .person-pill.is-active {
+    color: var(--color-ink);
+    background: #f1f5f9;
+    box-shadow: none;
+  }
+
+  .person-pill-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── Stage ── */
+  .alumni-stage {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+  }
+
+  /* ── Case Cards (Flat) ── */
+  .alumni-case-card {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    box-shadow: none;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition:
+      border-color 0.2s ease,
+      z-index 0.2s;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .alumni-case-card:focus-visible {
+    border-color: var(--color-purple);
+    box-shadow: none;
+  }
+
+  /* Floating pill badge on each card */
+  .case-badge-pill {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    border-radius: 9999px;
+    font-size: clamp(10px, 0.72vw, 11px);
+    font-weight: 700;
+    color: var(--color-ink);
+    z-index: 5;
+    box-shadow: none;
+    pointer-events: none;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+  }
+
+  .dot-readdle {
+    background: #e11d48;
+  }
+
+  .dot-dzyga {
+    background: #d97706;
+  }
+
+  /* Desktop positions: straight flat overlap */
+  .card-pavlo {
+    top: 0;
+    left: 4%;
+    width: min(65%, 440px);
+    aspect-ratio: 696 / 680;
+    z-index: 2;
+    transform: none;
+  }
+
+  .card-iryna {
+    bottom: clamp(38px, 4.8vh, 48px);
+    right: 4%;
+    width: min(65%, 440px);
+    aspect-ratio: 696 / 680;
+    z-index: 1;
+    transform: none;
+  }
+
+  /* Highlight/Focus state (Flat) */
+  .alumni-case-card.is-focused {
+    z-index: 10 !important;
+    border-color: var(--color-purple);
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  .case-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #ffffff;
+  }
+
+  .case-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+  }
+
+  /* ── Responsive: Tablet (768px - 1023px) ── */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .alumni-cases-root {
+      padding: 14px 12px;
+    }
+
+    .alumni-header-bar {
+      margin-bottom: 8px;
+    }
+
+    .card-pavlo {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 320px;
+      aspect-ratio: 696 / 680;
+      z-index: 1;
+    }
+
+    .card-iryna {
+      bottom: 42px;
+      right: auto;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 320px;
+      aspect-ratio: 696 / 680;
+      z-index: 2;
+    }
+
+    .alumni-case-card.is-focused {
+      transform: translateX(-50%) !important;
+    }
+  }
+
+  /* ── Responsive: Mobile (< 768px) ── */
+  @media (max-width: 767px) {
+    .alumni-cases-root {
+      min-height: 480px;
+      padding: 16px 12px;
+    }
+
+    .alumni-stage {
+      min-height: 400px;
+    }
+
+    .card-pavlo {
+      top: 0;
+      left: 2%;
+      width: 68%;
+      max-width: 280px;
+      transform: none;
+    }
+
+    .card-iryna {
+      bottom: 38px;
+      right: 2%;
+      width: 68%;
+      max-width: 280px;
+      transform: none;
+    }
+
+    .alumni-case-card.is-focused {
+      transform: none !important;
+    }
+  }
+</style>

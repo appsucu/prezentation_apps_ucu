@@ -5,6 +5,7 @@ import type { CollectionEntry } from 'astro:content';
 import MapPin from './MapPin.astro';
 import CurriculumRoadmap from './CurriculumRoadmap.astro';
 import OxfordCollage from './OxfordCollage.astro';
+import AlumniCases from './AlumniCases.astro';
 interface Props {
   src: string | string[];
   alt?: string;
@@ -30,6 +31,7 @@ const isDual = srcs.length === 2;
 const isMulti = srcs.length > 2;
 const isRoadmap = isDual && rawSrcs.some((s) => s.includes('slide8'));
 const isOxford = isDual && rawSrcs.some((s) => s.includes('slide11'));
+const isAlumniCases = isDual && rawSrcs.some((s) => s.includes('slide17'));
 
 const html = (str: string) =>
   str
@@ -72,9 +74,10 @@ const creditHtml = credit
   'slide-image',
   fit === 'contain' && !isDual && !research && 'fit-contain',
   isMulti && 'multi',
-  isDual && !isRoadmap && !isOxford && 'dual-image',
+  isDual && !isRoadmap && !isOxford && !isAlumniCases && 'dual-image',
   isRoadmap && 'roadmap-image',
   isOxford && 'oxford-image',
+  isAlumniCases && 'alumni-image',
   research && 'research-image'
 ]}>
   {research ? (
@@ -126,6 +129,12 @@ const creditHtml = credit
     <OxfordCollage
       photo1={srcs[0]}
       photo2={srcs[1]}
+      lazy={lazy}
+    />
+  ) : isAlumniCases ? (
+    <AlumniCases
+      card1={srcs[0]}
+      card2={srcs[1]}
       lazy={lazy}
     />
   ) : isDual ? (

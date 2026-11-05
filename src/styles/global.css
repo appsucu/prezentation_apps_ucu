@@ -419,6 +419,16 @@
   background: var(--color-surface);
 }
 
+/* ── Alumni Cases Slide (Slide 17: Pavlo Bryliak & Iryna Popovych) ── */
+.slide:not(.hero) .slide-image.alumni-image {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+
 /* ── Research-Image Slide (Research Labs/Centers + Map, Slide 3) ── */
 .slide:not(.hero) .slide-image.research-image {
   display: flex;
@@ -616,6 +626,15 @@
   .slide:not(.hero) .slide-image.oxford-image {
     height: auto;
     min-height: 480px;
+    max-height: none;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide:not(.hero) .slide-image.alumni-image {
+    height: auto;
+    min-height: 520px;
     max-height: none;
     overflow: visible;
     display: flex;
