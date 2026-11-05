@@ -2,6 +2,8 @@
 interface Props { items: string[] }
 const { items } = Astro.props;
 ---
-<div class="slide-logos">
-  {items.map((l) => <img src={l} alt="" loading="lazy" />)}
+<div class="slide-logos flex items-center flex-wrap gap-[clamp(16px,2.8vw,40px)] mt-[clamp(12px,2vh,24px)] pt-2">
+  {items.map((src) => (
+    <img class="block h-[clamp(22px,3.4vh,38px)] w-auto max-w-[180px] object-contain" src={src} alt="" loading="lazy" />
+  ))}
 </div>

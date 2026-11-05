@@ -1,6 +1,10 @@
 ---
+import { statSync } from 'node:fs';
+import { join } from 'node:path';
 import type { CollectionEntry } from 'astro:content';
 import MapPin from './MapPin.astro';
+import CurriculumRoadmap from './CurriculumRoadmap.astro';
+import OxfordCollage from './OxfordCollage.astro';
 interface Props {
   src: string | string[];
   alt?: string;
@@ -8,9 +12,55 @@ interface Props {
   pin?: CollectionEntry<'slides'>['data']['pin'];
   credit?: string;
   lazy?: boolean;
+  research?: CollectionEntry<'slides'>['data']['research'];
 }
-const { src, alt = '', fit, pin, credit, lazy } = Astro.props;
-const srcs = Array.isArray(src) ? src : [src];
+const { src, alt = '', fit, pin, credit, lazy, research } = Astro.props;
+const versioned = (p: string) => {
+  if (!import.meta.env.DEV) return p;
+  try {
+    const mtime = Math.floor(statSync(join(process.cwd(), 'public', p)).mtimeMs);
+    return `${p}?v=${mtime}`;
+  } catch {
+    return p;
+  }
+};
+const rawSrcs = Array.isArray(src) ? src : [src];
+const srcs = rawSrcs.map(versioned);
+const isDual = srcs.length === 2;
+const isMulti = srcs.length > 2;
+const isRoadmap = isDual && rawSrcs.some((s) => s.includes('slide8'));
+const isOxford = isDual && rawSrcs.some((s) => s.includes('slide11'));
+
+const html = (str: string) =>
+  str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+
+let leaderRole = '';
+let leaderName = '';
+let leaderSub = '';
+
+if (isDual && credit) {
+  const lines = credit.split('\n').map((l) => l.trim()).filter(Boolean);
+  if (lines.length > 0) {
+    leaderRole = lines[0].replace(/:$/, '').trim();
+  }
+  if (lines.length > 1) {
+    const raw = lines[1];
+    const match = raw.match(/\*\*([^*]+)\*\*/);
+    leaderName = match ? match[1] : raw.replace(/,/g, '').trim();
+    const afterComma = raw.includes(',') ? raw.split(',').slice(1).join(',').trim() : '';
+    if (afterComma) {
+      leaderSub = afterComma;
+    }
+  }
+  if (lines.length > 2) {
+    leaderSub = (leaderSub ? leaderSub + ', ' : '') + lines.slice(2).join(' ').trim();
+  }
+}
+
 const creditHtml = credit
   ?.replace(/&/g, '&amp;')
   .replace(/</g, '&lt;')
@@ -18,9 +68,138 @@ const creditHtml = credit
   .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
   .replace(/\n/g, '<br>');
 ---
-<div class:list={['slide-image', fit === 'contain' && 'fit-contain', srcs.length > 1 && 'multi']}>
-  {srcs.map((s, i) => <img src={s} alt={i === 0 ? alt : ''} decoding="async" loading={lazy ? 'lazy' : undefined} />)}
+<div class:list={[
+  'slide-image',
+  fit === 'contain' && !isDual && !research && 'fit-contain',
+  isMulti && 'multi',
+  isDual && !isRoadmap && !isOxford && 'dual-image',
+  isRoadmap && 'roadmap-image',
+  isOxford && 'oxford-image',
+  research && 'research-image'
+]}>
+  {research ? (
+    <div class="research-pane">
+      <div class="research-top">
+        <div class="research-header">
+          <span class="research-accent" aria-hidden="true"></span>
+          <span class="research-title">{research.heading ?? 'Наукові лабораторії та центри'}</span>
+        </div>
+        <div class="research-chips">
+          {research.chips.map((item) => {
+            const text = typeof item === 'string' ? item : (item.text ?? '');
+            return (
+              <span class="chip" set:html={html(text)} />
+            );
+          })}
+        </div>
+        {research.logos && research.logos.length > 0 && (
+          <div class="research-logos">
+            {research.logos.map((logo) => (
+              <img
+                src={logo}
+                alt=""
+                class="research-logo-item"
+                loading={lazy ? 'lazy' : undefined}
+                decoding="async"
+              />
+            ))}
+          </div>
+        )}
+      </div>
+      <div class="research-bottom">
+        <img
+          src={srcs[0]}
+          alt={alt}
+          class="research-map-img"
+          decoding="async"
+        />
+      </div>
+    </div>
+  ) : isRoadmap ? (
+    <CurriculumRoadmap
+      leaderPhoto={srcs[0]}
+      leaderRole={leaderRole}
+      leaderName={leaderName}
+      leaderSub={leaderSub}
+    />
+  ) : isOxford ? (
+    <OxfordCollage
+      photo1={srcs[0]}
+      photo2={srcs[1]}
+      lazy={lazy}
+    />
+  ) : isDual ? (
+    <div class="dual-top-pane">
+      <div class="w-full bg-white select-none">
+        {/* Cover Banner */}
+        <div class="relative h-14 sm:h-16 bg-gradient-to-r from-[#291636] via-purple to-[#8e3ab0] overflow-hidden">
+          <div class="absolute -right-8 -top-10 w-32 h-32 rounded-full bg-green/25 blur-xl" aria-hidden="true"></div>
+          {leaderRole && (
+            <div class="absolute right-4 top-3 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white text-[10px] font-extrabold uppercase tracking-[0.12em]">
+              <span class="w-1.5 h-1.5 rounded-full bg-green"></span>
+              <span>{leaderRole}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Profile Content with Overlapping Avatar */}
+        <div class="px-5 sm:px-6 pb-4 pt-0 flex flex-col sm:flex-row sm:items-end justify-between gap-3 relative">
+          <div class="flex items-end gap-3.5 sm:gap-4 min-w-0">
+            {/* Large Avatar */}
+            <div class="relative -mt-9 sm:-mt-10 shrink-0">
+              <img
+                src={srcs[0]}
+                alt={leaderName || alt}
+                class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover object-[50%_20%] border-[3.5px] border-white shadow-md bg-slate-100 block"
+                decoding="async"
+                loading={lazy ? 'lazy' : undefined}
+              />
+              <span
+                class="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-green border-2 border-white shadow-xs"
+                aria-hidden="true"
+              ></span>
+            </div>
+
+            {/* Name, Headline & Institution */}
+            <div class="flex flex-col min-w-0 pt-1.5 pb-0.5">
+              {leaderName && (
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h3 class="font-display font-extrabold text-[17px] sm:text-[19px] text-ink leading-tight tracking-tight m-0">
+                    {leaderName}
+                  </h3>
+                  <svg class="w-4 h-4 text-purple shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.5-1.5 2.6 2.6 6.4-6.4 1.5 1.5-7.9 7.9z"/>
+                  </svg>
+                </div>
+              )}
+              {leaderRole && (
+                <p class="text-[12px] sm:text-[12.5px] text-ink/85 font-semibold leading-snug mt-0.5 mb-0">
+                  {leaderRole} «Робототехніка»
+                </p>
+              )}
+              {leaderSub && (
+                <p class="text-[11px] sm:text-[11.5px] text-muted font-medium leading-tight mt-0.5 mb-0">
+                  <span class="truncate">{leaderSub} · Львів, Україна</span>
+                </p>
+              )}
+              {!leaderRole && !leaderName && credit && <div set:html={creditHtml} />}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class:list={['dual-bottom-pane', fit === 'contain' && 'fit-contain']}>
+      <img
+        src={srcs[1]}
+        alt={alt}
+        decoding="async"
+        loading={lazy ? 'lazy' : undefined}
+      />
+    </div>
+  ) : (
+    srcs.map((s, i) => <img src={s} alt={i === 0 ? alt : ''} decoding="async" loading={lazy ? 'lazy' : undefined} />)
+  )}
   {pin && <MapPin pin={pin} />}
-  {credit && <p class="image-credit" set:html={creditHtml} />}
-  <a class="image-label" href="https://apps.ucu.edu.ua" target="_blank" rel="noopener noreferrer">APPS.UCU ↗</a>
+  {!isDual && credit && <p class="image-credit" set:html={creditHtml} />}
+  {!isRoadmap && <a class="image-label" href="https://apps.ucu.edu.ua" target="_blank" rel="noopener noreferrer">APPS.UCU ↗</a>}
 </div>

@@ -4,24 +4,33 @@ import { pad } from '../lib/slides';
 interface Props { slides: CollectionEntry<'slides'>[] }
 const { slides } = Astro.props;
 ---
-<div id="overview" class="overlay" hidden>
-  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="overviewTitle">
-    <div class="panel-head">
+<div id="overview" class="fixed inset-0 z-50 bg-[#190f1e]/60 backdrop-blur-sm flex justify-end transition-opacity duration-200" hidden>
+  <div class="bg-white w-full max-w-[760px] h-full overflow-y-auto scroll-smooth p-[clamp(24px,4vw,56px)] shadow-2xl animate-[panelSlide_0.25s_ease-out]" role="dialog" aria-modal="true" aria-labelledby="overviewTitle">
+    <div class="flex justify-between items-start mb-6">
       <div>
-        <span class="eyebrow">НАВІГАЦІЯ</span>
-        <h2 id="overviewTitle">Зміст презентації<span class="green">.</span></h2>
+        <span class="text-[10px] tracking-[0.16em] font-bold text-muted uppercase">НАВІГАЦІЯ</span>
+        <h2 id="overviewTitle" class="text-3xl sm:text-5xl font-black tracking-tight text-ink mt-2">
+          Зміст презентації<span class="text-green">.</span>
+        </h2>
       </div>
-      <button id="closeOverview" class="close" aria-label="Закрити зміст">×</button>
+      <button id="closeOverview" class="w-10 h-10 flex items-center justify-center text-3xl text-muted hover:text-ink transition-colors cursor-pointer" aria-label="Закрити зміст">×</button>
     </div>
-    <p>Оберіть слайд, щоб перейти до потрібної теми.</p>
-    <nav id="slideList" aria-label="Слайди презентації">
+    <p class="text-sm text-muted mb-6">Оберіть слайд, щоб перейти до потрібної теми (або клавіша O / Esc).</p>
+    <nav id="slideList" class="flex flex-col" aria-label="Слайди презентації">
       {slides.map((s, i) => (
         <Fragment>
           {(i === 0 || slides[i - 1].data.section !== s.data.section) && (
-            <h3 class="list-section">{s.data.section}</h3>
+            <h3 class="text-[11px] font-bold text-purple tracking-[0.14em] uppercase mt-6 mb-2">
+              {s.data.section}
+            </h3>
           )}
-          <a class="slide-item" href={`#/slide/${i + 1}`} aria-current={i === 0 ? 'true' : undefined}>
-            <span>{pad(i + 1)}</span>{s.data.title}
+          <a
+            class="slide-item flex items-baseline gap-4 py-3.5 px-2 border-t border-line text-ink font-bold text-sm sm:text-base hover:text-purple hover:bg-purple/[0.03] hover:pl-3 transition-all border-l-2 border-l-transparent aria-[current=true]:border-l-purple aria-[current=true]:text-purple aria-[current=true]:bg-purple/[0.05] aria-[current=true]:pl-3"
+            href={`#/slide/${i + 1}`}
+            aria-current={i === 0 ? 'true' : undefined}
+          >
+            <span class="font-mono text-xs text-slate-400 min-w-[24px]">{pad(i + 1)}</span>
+            <span>{s.data.title}</span>
           </a>
         </Fragment>
       ))}

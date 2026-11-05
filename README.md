@@ -28,8 +28,23 @@ npm run check     # лише перевірка (TypeScript + схема сла�
 - `src/styles/global.css` — оформлення, кольори й адаптивність.
 - `public/` — файли, що копіюються як є: `assets/` (зображення), `favicon.svg`.
 - `dist/` — результат `npm run build`. Руками не редагувати: перезаписується при кожній збірці.
-- `docs/` — примітки щодо вмісту та перевірок.
+- `docs/` — документація, інструкції з розгортання та примітки щодо вмісту.
 
 ## Публікація
 
-Виконайте `npm run build` і опублікуйте вміст папки `dist`. Зміни в локальній копії не оновлюють опублікований сайт автоматично.
+Проєкт налаштовано для хостингу на [Vercel](https://vercel.com).
+* **Продакшн-домен:** [https://prezentationappsucu.vercel.app](https://prezentationappsucu.vercel.app)
+* **Панель Vercel:** [https://vercel.com/ruslantodo/prezentation_apps_ucu](https://vercel.com/ruslantodo/prezentation_apps_ucu)
+
+### Швидкий деплой через CLI:
+```bash
+npx vercel --prod
+```
+
+### Автоматичний деплой через Git:
+Будь-який push у гілку `main` автоматично оновлює сайт на Vercel:
+```bash
+git push origin main
+```
+
+Детальні інструкції та налаштування дивіться у [docs/DEPLOY_VERCEL.md](docs/DEPLOY_VERCEL.md).

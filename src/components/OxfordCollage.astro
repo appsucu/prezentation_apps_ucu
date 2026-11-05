@@ -1,0 +1,303 @@
+---
+interface Props {
+  photo1: string;
+  photo2: string;
+  lazy?: boolean;
+}
+
+const { photo1, photo2, lazy = false } = Astro.props;
+---
+
+<div class="oxford-collage-root">
+  <!-- Subtle Oxford Program Header Badge -->
+  <div class="oxford-header-pill" aria-label="Oxford University Master's Degree">
+    <span class="oxford-crest-dot" aria-hidden="true"></span>
+    <span class="oxford-pill-uni">University of Oxford</span>
+    <span class="oxford-pill-divider" aria-hidden="true">/</span>
+    <span class="oxford-pill-degree">MSc in Advanced CS</span>
+  </div>
+
+  <!-- Collage Workspace -->
+  <div class="oxford-cards-stage">
+    <!-- Card 1: Maxim Buleshni -->
+    <figure class="oxford-card card-maxim">
+      <div class="oxford-photo-wrap">
+        <img
+          src={photo1}
+          alt="Максим Булешні біля Radcliffe Camera, Оксфорд"
+          class="oxford-photo photo-maxim"
+          loading={lazy ? 'lazy' : 'eager'}
+          decoding="sync"
+        />
+        <div class="oxford-photo-gradient" aria-hidden="true"></div>
+      </div>
+      <figcaption class="oxford-card-caption">
+        <span class="oxford-person-name">Максим Булешні</span>
+        <span class="oxford-person-role">MSc in Advanced CS</span>
+      </figcaption>
+    </figure>
+
+    <!-- Card 2: Mykhailo Buleshni -->
+    <figure class="oxford-card card-mykhailo">
+      <div class="oxford-photo-wrap">
+        <img
+          src={photo2}
+          alt="Михайло Булешні у коледжі Оксфорду"
+          class="oxford-photo photo-mykhailo"
+          loading={lazy ? 'lazy' : 'eager'}
+          decoding="sync"
+        />
+        <div class="oxford-photo-gradient" aria-hidden="true"></div>
+      </div>
+      <figcaption class="oxford-card-caption">
+        <span class="oxford-person-name">Михайло Булешні</span>
+        <span class="oxford-person-role">MSc in Advanced CS</span>
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<style>
+  .oxford-collage-root {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(160deg, #f7f9fa 0%, #edf1f5 100%);
+    overflow: hidden;
+    padding: clamp(16px, 2.2vh, 28px) clamp(16px, 2.2vw, 32px);
+    box-sizing: border-box;
+  }
+
+  /* ── Header Pill ── */
+  .oxford-header-pill {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #ffffff;
+    border: 1px solid var(--color-line);
+    border-radius: 9999px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    z-index: 10;
+    margin-bottom: clamp(10px, 1.4vh, 18px);
+  }
+
+  .oxford-crest-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: var(--color-purple);
+    box-shadow: 0 0 0 3px rgba(112, 39, 140, 0.15);
+  }
+
+  .oxford-pill-uni {
+    font-family: var(--font-display);
+    font-size: clamp(0.72rem, 0.82vw, 0.82rem);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--color-ink);
+  }
+
+  .oxford-pill-divider {
+    color: var(--color-muted);
+    font-weight: 300;
+    font-size: 11px;
+  }
+
+  .oxford-pill-degree {
+    font-size: clamp(0.7rem, 0.8vw, 0.78rem);
+    font-weight: 600;
+    color: var(--color-purple);
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Cards Stage ── */
+  .oxford-cards-stage {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ── Base Card Style ── */
+  .oxford-card {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    border: 4px solid #ffffff;
+    border-radius: 18px;
+    box-shadow:
+      0 12px 28px -6px rgba(15, 23, 42, 0.16),
+      0 4px 10px -2px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, z-index 0.25s;
+    cursor: default;
+  }
+
+  .oxford-card:hover {
+    z-index: 20 !important;
+    transform: translateY(-4px) scale(1.02) !important;
+    box-shadow:
+      0 20px 40px -8px rgba(15, 23, 42, 0.22),
+      0 8px 18px -4px rgba(15, 23, 42, 0.1);
+  }
+
+  /* ── Card 1: Maxim (top-left) ── */
+  .card-maxim {
+    top: 2%;
+    left: 4%;
+    width: min(54%, 350px);
+    height: 74%;
+    z-index: 2;
+    transform: rotate(-1.5deg);
+  }
+
+  /* ── Card 2: Mykhailo (bottom-right) ── */
+  .card-mykhailo {
+    bottom: clamp(38px, 4.8vh, 48px);
+    right: 4%;
+    width: min(54%, 350px);
+    height: 74%;
+    z-index: 3;
+    transform: rotate(1.2deg);
+  }
+
+  /* ── Photo Container ── */
+  .oxford-photo-wrap {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .oxford-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+  }
+
+  .oxford-card:hover .oxford-photo {
+    transform: scale(1.03);
+  }
+
+  /* Focus positions tuned to keep face & Oxford architecture in frame */
+  .photo-maxim {
+    object-position: center 26%;
+  }
+
+  .photo-mykhailo {
+    object-position: center 36%;
+  }
+
+  .oxford-photo-gradient {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 35%;
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.35) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  /* ── Card Caption / Footer ── */
+  .oxford-card-caption {
+    padding: clamp(8px, 1.2vh, 12px) clamp(12px, 1.4vw, 16px);
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-top: 1px solid var(--color-line);
+  }
+
+  .oxford-person-name {
+    font-family: var(--font-display);
+    font-size: clamp(0.86rem, 1vw, 1.05rem);
+    font-weight: 800;
+    color: var(--color-ink);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+
+  .oxford-person-role {
+    font-size: clamp(0.68rem, 0.78vw, 0.78rem);
+    font-weight: 600;
+    color: var(--color-purple);
+    line-height: 1.2;
+  }
+
+  /* ── Responsive adjustments ── */
+  /* Tablet (768px - 1023px): tall narrow column — stack cards vertically */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .oxford-collage-root {
+      padding: 16px 14px;
+    }
+
+    .oxford-header-pill {
+      margin-bottom: 10px;
+    }
+
+    .card-maxim {
+      top: 0;
+      left: 5%;
+      width: 90%;
+      height: 47%;
+      transform: none;
+    }
+
+    .card-mykhailo {
+      bottom: 44px;
+      right: 5%;
+      width: 90%;
+      height: 47%;
+      transform: none;
+    }
+  }
+
+  /* Mobile (< 768px): full width stacked below text */
+  @media (max-width: 767px) {
+    .oxford-collage-root {
+      min-height: 460px;
+      padding: 16px 12px;
+    }
+
+    .oxford-cards-stage {
+      min-height: 380px;
+    }
+
+    .card-maxim {
+      top: 0;
+      left: 2%;
+      width: 56%;
+      height: 88%;
+      transform: rotate(-1.5deg);
+    }
+
+    .card-mykhailo {
+      bottom: 38px;
+      right: 2%;
+      width: 56%;
+      height: 88%;
+      transform: rotate(1.5deg);
+    }
+
+    .oxford-person-name {
+      font-size: 0.82rem;
+    }
+
+    .oxford-person-role {
+      font-size: 0.68rem;
+    }
+  }
+</style>

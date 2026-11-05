@@ -6,52 +6,98 @@ import { getSlides } from '../lib/slides';
 
 const slides = await getSlides();
 const total = slides.length;
-const first = slides[0].data;
+const first = slides[0]?.data ?? { section: '' };
 ---
 <!doctype html>
-<html lang="uk">
+<html lang="uk" class="h-full overflow-hidden">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#70278c" />
-    <meta name="description" content="презентація Факультету прикладних наук УКУ: програми, дослідження та можливості." />
-    <meta property="og:title" content="APPS.UCU — факультет прикладних наук" />
-    <meta property="og:description" content="Освіта, дослідження та спільнота APPS.UCU" />
-    <title>APPS.UCU — Факультет прикладних наук</title>
+    <meta name="description" content="Презентація Факультету прикладних наук Українського католицького університету (APPS.UCU): освітні програми, кейси випускників, партнерства та дослідження." />
+    <meta property="og:title" content="APPS.UCU — Факультет прикладних наук УКУ" />
+    <meta property="og:description" content="Новий стандарт IT-освіти в Україні: бакалаврат, магістратура Data Science, PhD, наукові лабораторії та історії успіху випускників." />
+    <title>APPS.UCU — Факультет прикладних наук УКУ</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
   </head>
-  <body>
-    <header class="top">
-      <a class="brand" href="#/slide/1" aria-label="APPS.UCU — на початок">
-        <img src="assets/main/logo.svg" alt="Український католицький університет та Факультет прикладних наук" />
+  <body class="h-full overflow-hidden flex flex-col bg-surface text-ink font-sans antialiased m-0">
+    <header class="top h-[54px] sm:h-[64px] md:h-[70px] flex items-center justify-between px-4 sm:px-8 md:px-[clamp(32px,5vw,80px)] border-b border-line bg-surface/95 backdrop-blur-xs shrink-0 z-20">
+      <a class="brand flex items-center gap-2.5 text-purple font-black tracking-tight no-underline" href="#/slide/1" aria-label="APPS.UCU — на початок">
+        <img class="block h-[28px] sm:h-[34px] md:h-[38px] w-auto max-w-[92px] sm:max-w-[108px] md:max-w-[116px] object-contain mix-blend-multiply transition-transform hover:scale-[1.02]" src="assets/main/logo.svg" alt="Український католицький університет та Факультет прикладних наук" />
       </a>
-      <div class="top-right">
-        <span class="top-caption">ПРЕЗЕНТАЦІЯ ФАКУЛЬТЕТУ <span> / УКУ</span></span>
-        <button id="overviewButton" class="menu" aria-expanded="false" aria-controls="overview">
-          <span class="gridicon">▦</span> Зміст
+      <div class="top-right flex items-center gap-4 sm:gap-8">
+        <span class="top-caption hidden md:inline-block text-[10px] tracking-[0.16em] font-bold text-muted uppercase">
+          ПРЕЗЕНТАЦІЯ ФАКУЛЬТЕТУ <span class="opacity-60">/ УКУ</span>
+        </span>
+        <button id="overviewButton" class="menu bg-white border border-line rounded-lg px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-bold text-ink hover:text-purple hover:border-purple/40 shadow-2xs transition-all flex items-center gap-2 cursor-pointer" aria-expanded="false" aria-controls="overview">
+          <svg class="w-4 h-4 text-purple shrink-0" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="2.25" cy="4" r="1.25" fill="currentColor" />
+            <path d="M6 4h8" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+            <circle cx="2.25" cy="8" r="1.25" fill="currentColor" />
+            <path d="M6 8h8" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+            <circle cx="2.25" cy="12" r="1.25" fill="currentColor" />
+            <path d="M6 12h5.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+          </svg>
+          <span>Зміст</span>
         </button>
       </div>
     </header>
-    <main id="main">
-      <div id="slide" aria-live="polite">
+
+    <main id="main" class="flex-1 min-h-0 flex items-stretch overflow-hidden bg-surface">
+      <div id="slide" class="w-full h-full flex overflow-hidden" aria-live="polite">
         {slides.map((entry, index) => <Slide entry={entry} index={index} total={total} />)}
       </div>
     </main>
-    <footer class="bottom">
-      <div class="progress" aria-hidden="true"><div id="progressBar" style={`width:${100 / total}%`}></div></div>
-      <div class="footer-left">
-        <span class="status-dot"></span>
-        <span id="sectionLabel">{first.section.toUpperCase()}</span>
-        <span class="footer-separator">/</span>
-        <span>APPS.UCU</span>
+
+    <footer class="bottom h-[48px] sm:h-[56px] md:h-[62px] border-t border-line flex items-center justify-between px-4 sm:px-8 md:px-[clamp(32px,5vw,80px)] relative shrink-0 bg-surface z-20">
+      <div class="progress absolute top-[-2px] inset-x-0 h-[3px] bg-slate-200/80" aria-hidden="true">
+        <div id="progressBar" class="h-full bg-green transition-[width] duration-200" style={`width:${100 / total}%`}></div>
       </div>
-      <div class="controls">
-        <button id="prev" aria-label="Попередній слайд" disabled>←</button>
-        <span id="counter" class="counter">{`01 / ${total}`}</span>
-        <button id="next" aria-label="Наступний слайд">→</button>
+      <div class="footer-left flex items-center gap-2 sm:gap-3 text-[10px] tracking-[0.14em] font-bold text-muted uppercase min-w-0 max-w-[calc(50%-100px)]">
+        <span class="status-dot w-2 h-2 rounded-full bg-green shrink-0"></span>
+        <span id="sectionLabel" class="truncate">{first.section.toUpperCase()}</span>
+        <span class="footer-separator hidden sm:inline text-slate-300">/</span>
+        <span class="hidden sm:inline shrink-0">APPS.UCU</span>
       </div>
-      <button id="fullscreen" class="fullscreen" aria-label="Повноекранний режим" title="Повноекранний режим">⛶</button>
+      <div class="controls absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-1.5 sm:gap-3">
+        <button id="prev" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-md text-ink disabled:opacity-25 disabled:cursor-not-allowed hover:text-purple hover:bg-purple/5 transition-colors cursor-pointer" aria-label="Попередній слайд" disabled>
+          <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <span id="counter" class="counter font-mono text-[11px] sm:text-xs font-bold tracking-wider text-muted min-w-[54px] sm:min-w-[60px] text-center select-none flex items-center justify-center h-8 sm:h-9 leading-none">{`01 / ${total}`}</span>
+        <button id="next" class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-md text-ink disabled:opacity-25 disabled:cursor-not-allowed hover:text-purple hover:bg-purple/5 transition-colors cursor-pointer" aria-label="Наступний слайд">
+          <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+      <div class="footer-right flex items-center justify-end gap-1 sm:gap-1.5">
+        <button id="laser" class="laser hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 items-center justify-center rounded-md text-ink hover:text-purple hover:bg-purple/5 transition-colors cursor-pointer relative" aria-label="Лазерна указка (L — увімк/вимк, Shift+L — змінити стиль)" aria-pressed="false" title="Лазерна указка (L — увімк/вимк, Shift+L — змінити стиль)">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" fill="currentColor" />
+            <circle cx="12" cy="12" r="8" stroke-dasharray="3 3" />
+            <line x1="12" y1="2" x2="12" y2="4" />
+            <line x1="12" y1="20" x2="12" y2="22" />
+            <line x1="2" y1="12" x2="4" y2="12" />
+            <line x1="20" y1="12" x2="22" y2="12" />
+          </svg>
+          <span id="laserIndicator" class="laser-indicator hidden absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[#ff2456] shadow-[0_0_6px_#ff2456]"></span>
+        </button>
+        <button id="fullscreen" class="fullscreen hidden sm:flex w-8 h-8 sm:w-9 sm:h-9 items-center justify-center rounded-md text-ink hover:text-purple hover:bg-purple/5 transition-colors cursor-pointer" aria-label="Повноекранний режим" title="Повноекранний режим (F)">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+          </svg>
+        </button>
+      </div>
     </footer>
+
+    <canvas id="laserCanvas" class="fixed top-0 left-0 w-screen h-screen pointer-events-none z-50" hidden></canvas>
     <Overview slides={slides} />
     <script>
       import { initDeck } from '../scripts/deck';

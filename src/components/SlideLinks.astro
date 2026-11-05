@@ -1,5 +1,22 @@
 ---
-interface Props { links: { label: string; url: string }[] }
-const { links } = Astro.props;
+interface Props { links: { label: string; url: string }[]; hero?: boolean }
+const { links, hero } = Astro.props;
 ---
-{links.map((l) => <a class="slide-link" href={l.url} target="_blank" rel="noopener noreferrer">{l.label} ↗</a>)}
+<div class="flex flex-wrap gap-2.5 sm:gap-3 mt-[clamp(14px,2.2vh,24px)] w-full sm:w-auto">
+  {links.map((l) => (
+    <a
+      class:list={[
+        'inline-flex items-center justify-center text-center gap-2 font-bold text-xs sm:text-sm px-4 py-2.5 sm:px-5 sm:py-3 rounded-[4px] transition-colors no-underline cursor-pointer w-full sm:w-auto',
+        hero
+          ? 'bg-green text-dark hover:bg-green/90'
+          : 'bg-purple text-white hover:bg-purple/90'
+      ]}
+      href={l.url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span>{l.label}</span>
+      <span class="font-extrabold">↗</span>
+    </a>
+  ))}
+</div>

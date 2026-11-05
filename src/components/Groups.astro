@@ -2,12 +2,58 @@
 import type { CollectionEntry } from 'astro:content';
 interface Props { groups: NonNullable<CollectionEntry<'slides'>['data']['groups']> }
 const { groups } = Astro.props;
+const html = (s: string) =>
+  s.replace(/&/g, '&amp;')
+   .replace(/<br\s*\/?>/gi, '___BR___')
+   .replace(/</g, '&lt;')
+   .replace(/>/g, '&gt;')
+   .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+   .replace(/___BR___/g, '<br>')
+   .replace(/\s*(?:\\n|\n)\s*/g, '<br>')
+   .replace(/(?:^|\s+)\/n(?:\s+|$)/g, '<br>');
+
+const isTwoCol = groups.length === 2;
+const isThreeBento = groups.length === 3;
 ---
-<div class="groups">
-  {groups.map((g) => (
-    <div class:list={['group', g.accent && `group-${g.accent}`]}>
-      <div class="group-head">{g.heading}</div>
-      <div class="group-items">{g.items.map((i) => <div class="group-item">{i}</div>)}</div>
-    </div>
-  ))}
+<div class:list={[
+  'groups mt-[clamp(10px,1.6vh,20px)] w-full max-w-[980px] grid grid-cols-1 gap-x-[clamp(18px,2.2vw,32px)] gap-y-[clamp(10px,1.4vh,16px)]',
+  (isTwoCol || isThreeBento) ? 'sm:grid-cols-2 items-start' : 'max-w-[780px]'
+]}>
+  {groups.map((g, idx) => {
+    const accent = g.accent ?? (idx % 2 === 1 ? 'green' : 'purple');
+    const isGreen = accent === 'green';
+    const isRed = accent === 'red';
+    return (
+      <div class:list={[
+        'group-card flex flex-col',
+        isThreeBento && idx === 0 && 'sm:row-span-2'
+      ]}>
+        <div class="group-head relative flex items-baseline gap-2.5 pb-2 mb-0.5 border-b border-[#d0d5dd]">
+          <span class:list={[
+            'absolute left-0 -bottom-[1px] w-7 h-[2px]',
+            isGreen ? 'bg-green' : isRed ? 'bg-red-600' : 'bg-purple'
+          ]} aria-hidden="true" />
+          <span class:list={[
+            'font-mono text-[11px] font-bold tracking-[0.12em] leading-none shrink-0',
+            isGreen ? 'text-[#4a7814]' : isRed ? 'text-red-700' : 'text-purple'
+          ]}>
+            {String(idx + 1).padStart(2, '0')}
+          </span>
+          <span class="text-slate-300 font-light text-xs leading-none select-none">/</span>
+          <span class="font-display font-extrabold text-[clamp(0.74rem,0.86vw,0.85rem)] uppercase tracking-[0.1em] text-ink" set:html={html(g.heading)} />
+        </div>
+        <div class="group-items flex flex-col divide-y divide-[#e4e7ec]">
+          {g.items.map((item) => (
+            <div class="group-item py-[clamp(4px,0.75vh,8px)] flex items-start gap-2.5 text-[clamp(0.82rem,0.92vw,0.94rem)] font-semibold text-ink leading-snug">
+              <span class:list={[
+                'font-extrabold text-xs leading-none mt-[3px] shrink-0 select-none',
+                isGreen ? 'text-[#5b8c1d]' : isRed ? 'text-red-500' : 'text-purple'
+              ]}>↗</span>
+              <span class="[&_strong]:font-bold [&_strong]:text-ink" set:html={html(item)} />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  })}
 </div>

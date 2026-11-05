@@ -2,16 +2,28 @@
 import type { CollectionEntry } from 'astro:content';
 interface Props { items: NonNullable<CollectionEntry<'slides'>['data']['chips']> }
 const { items } = Astro.props;
+const html = (s: string) =>
+  s.replace(/&/g, '&amp;')
+   .replace(/<br\s*\/?>/gi, '___BR___')
+   .replace(/</g, '&lt;')
+   .replace(/>/g, '&gt;')
+   .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+   .replace(/___BR___/g, '<br>')
+   .replace(/\s*(?:\\n|\n)\s*/g, '<br>')
+   .replace(/(?:^|\s+)\/n(?:\s+|$)/g, '<br>');
 ---
-<div class="chips">
-  {items.map((c) =>
-    typeof c === 'string' ? (
-      <div class="chip">{c}</div>
-    ) : (
-      <div class:list={['chip', c.logo && 'chip-logo']}>
-        {c.text && <span>{c.text}</span>}
-        {c.logo && <img src={c.logo} alt={c.text ?? ''} loading="lazy" />}
+<div class="chips flex flex-wrap gap-1.5 sm:gap-2 mt-[clamp(8px,1.2vh,14px)] max-w-[980px]">
+  {items.map((it) => {
+    if (typeof it === 'string') {
+      return (
+        <span class="chip inline-flex items-center justify-center text-center bg-surface border border-line rounded-md py-1 px-2.5 sm:py-1.5 sm:px-3 text-[clamp(0.74rem,0.84vw,0.85rem)] leading-tight text-[#4f515a] font-medium [&_strong]:font-bold [&_strong]:text-ink" set:html={html(it)} />
+      );
+    }
+    return (
+      <div class="chip chip-logo bg-surface border border-line rounded-md p-2.5 flex flex-col gap-2">
+        {it.logo && <img class="h-[clamp(22px,2.4vw,30px)] w-auto max-w-full object-contain self-start" src={it.logo} alt={it.text ?? ''} loading="lazy" />}
+        {it.text && <span class="text-xs text-[#4f515a] font-medium [&_strong]:font-bold [&_strong]:text-ink" set:html={html(it.text)} />}
       </div>
-    ),
-  )}
+    );
+  })}
 </div>

@@ -8,33 +8,140 @@ import SlideLinks from './SlideLinks.astro';
 import SlideImage from './SlideImage.astro';
 import Logos from './Logos.astro';
 import LogoGroups from './LogoGroups.astro';
+import RankingTable from './RankingTable.astro';
 
 interface Props { entry: CollectionEntry<'slides'>; index: number; total: number }
 const { entry, index, total } = Astro.props;
 const s = entry.data;
 const { Content } = await render(entry);
+const isHero = s.type === 'hero';
+const isStack = s.layout === 'stack';
+const isMinimalCopy = !s.cards && !s.stats && !s.chips && !s.groups && !s.logogroups && !s.logos && !s.ranking;
+const formatInline = (text: string) =>
+  text
+    .replace(/&/g, '&amp;')
+    .replace(/<br\s*\/?>/gi, '___BR___')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/___BR___/g, '<br>')
+    .replace(/\s*(?:\\n|\n)\s*/g, '<br>')
+    .replace(/(?:^|\s+)\/n(?:\s+|$)/g, '<br>');
+
+const formatTitle = (title: string, hero: boolean) => {
+  const escaped = title
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+  if (hero) return escaped;
+  if (escaped === 'APPS.UCU') return escaped;
+  return escaped
+    .replace(
+      /(APPS\.UCU\??)/g,
+      '<span class="text-purple">$1</span>'
+    )
+    .replace(
+      /^([^:]+):(\s*)/,
+      '<span class="text-purple">$1:</span>$2'
+    );
+};
 ---
 <article
-  class:list={['slide', s.type === 'hero' && 'hero', s.image && 'has-image']}
+  class:list={[
+    'slide w-full h-full animate-[appear_0.23s_ease]',
+    isHero
+      ? 'hero relative flex flex-col bg-dark text-white overflow-hidden'
+      : isStack && s.image
+        ? 'has-image layout-stack flex flex-col overflow-y-auto overflow-x-hidden md:grid md:grid-cols-1 md:grid-rows-[auto_minmax(220px,1fr)] md:items-stretch md:overflow-hidden'
+        : s.image
+          ? 'has-image flex flex-col overflow-y-auto overflow-x-hidden md:grid md:grid-cols-[1.12fr_0.88fr] md:grid-rows-[minmax(0,1fr)] md:items-stretch md:overflow-hidden'
+          : 'flex flex-col overflow-y-auto overflow-x-hidden md:overflow-hidden',
+    isMinimalCopy && !isHero && 'is-minimal-copy'
+  ]}
   aria-label={`Слайд ${index + 1} з ${total}`}
   data-title={s.title}
   data-section={s.section}
   data-page={s.page}
   hidden={index !== 0}
 >
-  <div class:list={['slide-copy', s.logos && 'has-logos']}>
-    <div class="eyebrow">{`${s.section.toUpperCase()} \u00a0 / \u00a0 ${pad(index + 1)}`}</div>
-    <h1>{s.title}</h1>
-    <div class="lead"><Content /></div>
-    {s.cards && <Cards items={s.cards} />}
-    {s.stats && <Cards items={s.stats} stat />}
-    {s.dou && s.dou.map((d) => <img class="dou-img" src={d} alt="" aria-hidden="true" />)}
-    {s.chips && <Chips items={s.chips} />}
-    {s.groups && <Groups groups={s.groups} />}
-    {s.logogroups && <LogoGroups groups={s.logogroups} />}
-    {s.links && <SlideLinks links={s.links} />}
-    {s.note && <p class="note">{s.note}</p>}
-    {s.logos && <Logos items={s.logos} />}
+  <div class:list={[
+    'slide-copy relative flex flex-col box-border min-h-0',
+    isHero
+      ? 'z-10 flex-1 justify-center px-6 sm:px-10 md:px-[clamp(40px,6vw,96px)] pt-6 pb-[clamp(64px,13vh,140px)] text-white'
+      : isStack
+        ? 'w-full shrink-0 px-5 sm:px-8 pt-5 pb-4 md:px-[clamp(32px,5vw,80px)] md:py-[clamp(12px,2vh,24px)] md:border-b md:border-line'
+        : 'w-full shrink-0 px-5 sm:px-8 pt-6 pb-5 md:h-full md:max-h-full md:overflow-y-auto md:px-[clamp(32px,4.8vw,76px)] md:py-[clamp(14px,2.4vh,36px)]',
+    s.image && !isHero && !isStack && s.page !== 2 && 'md:border-r md:border-line',
+    !s.image && !isHero && 'md:px-[clamp(32px,5vw,80px)]',
+    s.dou && 'has-dou lg:pl-[clamp(64px,6vw,96px)]'
+  ]}>
+    <div class:list={[
+      'slide-copy-inner my-auto w-full flex flex-col',
+      (!s.image || isStack) && !isHero && (isStack ? 'max-w-[1440px] mx-auto' : 'max-w-[1120px] mx-auto'),
+      isMinimalCopy && !isHero && 'max-md:items-center max-md:text-center md:py-4'
+    ]}>
+      <div class:list={[
+        'eyebrow flex items-center gap-2.5 sm:gap-3 text-[10px] sm:text-[11px] tracking-[0.16em] font-extrabold uppercase mb-1.5 sm:mb-2',
+        isHero ? 'text-[#e8d8ef]' : 'text-purple',
+        isMinimalCopy && !isHero && 'max-md:justify-center'
+      ]}>
+        <span class="w-[22px] sm:w-[26px] h-[3px] bg-green shrink-0"></span>
+        <span>{`${s.section.toUpperCase()} \u00a0 / \u00a0 ${pad(index + 1)}`}</span>
+      </div>
+
+      <h1
+        class:list={[
+          'font-display font-extrabold tracking-[-0.03em] leading-[1.08] text-balance my-[clamp(6px,1vh,12px)]',
+          isHero
+            ? 'text-white text-[clamp(2.2rem,5.2vw,5.2rem)] max-w-[820px]'
+            : isMinimalCopy
+              ? 'text-ink text-[clamp(2rem,4vw,4rem)] max-w-[820px]'
+              : 'text-ink text-[1.5rem] sm:text-[1.9rem] md:text-[clamp(1.7rem,min(2.9vw,4.4vh),3rem)] max-w-[880px]'
+        ]}
+        set:html={formatTitle(s.title, isHero)}
+      />
+
+      <div class:list={[
+        'lead leading-[1.52] max-w-[680px] text-pretty empty:hidden [&_p]:m-0 [&_p+p]:mt-2 [&_strong]:font-bold',
+        isHero
+          ? 'text-white/95 font-semibold text-[1.05rem] sm:text-[clamp(1.1rem,1.4vw,1.4rem)] [&_strong]:text-green'
+          : isMinimalCopy
+            ? 'text-[#4a515c] font-medium text-[1.05rem] sm:text-[clamp(1.1rem,1.4vw,1.35rem)] [&_strong]:text-ink'
+            : 'text-[#4a515c] font-normal text-[0.9rem] sm:text-[0.96rem] md:text-[clamp(0.9rem,min(1.04vw,1.7vh),1.1rem)] [&_strong]:text-ink'
+      ]}>
+        <Content />
+      </div>
+
+      {s.cards && <Cards items={s.cards} />}
+      {s.stats && <Cards items={s.stats} stat />}
+      {s.ranking && <RankingTable ranking={s.ranking} />}
+      {s.dou && s.dou.map((d) => (
+        <img
+          class="dou-img hidden lg:block absolute right-[clamp(32px,4.5vw,72px)] bottom-[clamp(10px,2vh,28px)] h-[clamp(310px,50vh,530px)] w-auto object-contain pointer-events-none z-0"
+          src={d}
+          alt=""
+          aria-hidden="true"
+        />
+      ))}
+      {s.chips && <Chips items={s.chips} />}
+      {s.groups && <Groups groups={s.groups} />}
+      {s.logogroups && <LogoGroups groups={s.logogroups} />}
+      {s.links && <SlideLinks links={s.links} hero={isHero} />}
+      {s.note && (
+        <p
+          class="note text-[11px] sm:text-xs text-muted mt-[clamp(10px,1.5vh,18px)] pt-2.5 border-t border-[#d9dce0] leading-relaxed max-w-[760px] [&_strong]:font-bold [&_strong]:text-ink"
+          set:html={formatInline(s.note)}
+        />
+      )}
+      {s.logos && <Logos items={s.logos} />}
+    </div>
+    {(s.page === 2 || entry.id === '02.md' || entry.id === '02') && (
+      <div class="slide2-ribbon hidden md:block" aria-hidden="true">
+        <svg class="w-full h-full block" viewBox="0 0 1000 240" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M -20 45 C 280 145, 620 155, 1020 35 L 1020 140 C 620 260, 280 250, -20 150 Z" fill="var(--color-green)" />
+        </svg>
+      </div>
+    )}
   </div>
-  {s.image && <SlideImage src={s.image} alt={s.title} fit={s.fit} pin={s.pin} credit={s.credit} lazy={index !== 0} />}
+  {s.image && <SlideImage src={s.image} alt={s.title} fit={s.fit} pin={s.pin} credit={s.credit} research={s.research} lazy={false} />}
 </article>

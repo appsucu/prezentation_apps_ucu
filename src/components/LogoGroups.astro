@@ -2,15 +2,19 @@
 interface Props { groups: { heading: string; logos: (string | { src: string; h: number })[] }[] }
 const { groups } = Astro.props;
 ---
-<div class="logo-groups">
+<div class="logo-groups mt-[clamp(8px,1.4vh,18px)] max-w-[1060px] w-full flex flex-col gap-[clamp(8px,1.4vh,18px)]">
   {groups.map((g) => (
-    <div class="lg">
-      <div class="lg-head"><span class="lg-title">{g.heading}</span></div>
-      <div class="lg-logos">{g.logos.map((l) =>
-        typeof l === 'string'
-          ? <img src={l} alt="" loading="lazy" />
-          : <img src={l.src} alt="" loading="lazy" style={`max-height:${l.h}px`} />
-      )}</div>
+    <div class="lg flex flex-col gap-1.5 sm:gap-2">
+      <div class="lg-head border-b border-slate-300 pb-1.5 relative">
+        <span class="lg-title text-xs sm:text-[13px] font-bold tracking-[0.06em] uppercase text-purple">{g.heading}</span>
+      </div>
+      <div class="lg-logos flex flex-col items-start gap-2 pt-0.5">
+        {g.logos.map((l) =>
+          typeof l === 'string'
+            ? <img class="block h-auto max-h-[clamp(26px,4.2vh,46px)] w-auto max-w-full object-contain" src={l} alt="" loading="lazy" />
+            : <img class="block h-auto w-auto max-w-full object-contain" src={l.src} alt="" loading="lazy" style={`max-height:min(${l.h}px, 5.6vh)`} />
+        )}
+      </div>
     </div>
   ))}
 </div>

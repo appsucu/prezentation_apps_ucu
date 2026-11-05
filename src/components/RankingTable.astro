@@ -1,0 +1,185 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  ranking: NonNullable<CollectionEntry<'slides'>['data']['ranking']>;
+}
+
+const { ranking } = Astro.props;
+const headers = ranking.headers ?? {};
+
+const formatInline = (text: string) =>
+  text
+    .replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+---
+
+<div class="ranking-wrapper w-full max-w-[1040px] mt-[clamp(8px,1.2vh,16px)] flex flex-col gap-2 sm:gap-2.5">
+  {ranking.highlights && ranking.highlights.length > 0 && (
+    <div class="ranking-highlights flex flex-wrap gap-1.5 sm:gap-2">
+      {ranking.highlights.map((h, i) => (
+        <div
+          class:list={[
+            'ranking-highlight inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs sm:text-[12.5px] leading-tight select-none',
+            i === 0
+              ? 'bg-purple/[0.08] border-purple/25 text-purple font-semibold'
+              : i === 1
+                ? 'bg-green/[0.14] border-green/30 text-[#32570a] font-semibold'
+                : 'bg-white border-line text-[#4a515c] font-medium'
+          ]}
+        >
+          {i === 0 && (
+            <svg class="w-3.5 h-3.5 text-purple shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+              <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+              <path d="M4 22h16"/>
+              <path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/>
+              <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+            </svg>
+          )}
+          {i === 1 && (
+            <svg class="w-3.5 h-3.5 text-[#32570a] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="2" x2="12" y2="22"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          )}
+          {i === 2 && (
+            <svg class="w-3.5 h-3.5 text-muted shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="2" y1="12" x2="22" y2="12"/>
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          )}
+          <span set:html={formatInline(h)} />
+        </div>
+      ))}
+    </div>
+  )}
+
+  <div class="ranking-card w-full bg-white rounded-xl border border-line shadow-2xs overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse min-w-[560px]">
+        <thead>
+          <tr class="bg-slate-50/90 border-b border-line text-[10px] sm:text-[10.5px] font-bold text-muted uppercase tracking-[0.08em]">
+            <th class="py-2 px-3.5 sm:px-4 w-[42%] sm:w-[44%]">
+              {headers.name ?? 'ЗВО / Університет'}
+            </th>
+            <th class="py-2 px-3 text-center w-[18%] sm:w-[17%] whitespace-nowrap">
+              <span class="block">{headers.salary ?? 'Зарплата розробників'}</span>
+              <span class="block text-[9.5px] text-muted/75 font-semibold normal-case tracking-normal">{headers.salarySub ?? 'USD thou.'}</span>
+            </th>
+            <th class="py-2 px-3 text-center w-[25%] whitespace-nowrap">
+              <span class="block">{headers.english ?? 'Рівень англійської'}</span>
+              <span class="block text-[9.5px] text-muted/75 font-semibold normal-case tracking-normal">{headers.englishSub ?? '% володіння'}</span>
+            </th>
+            <th class="py-2 px-3 text-center w-[15%] sm:w-[14%] whitespace-nowrap">
+              <span class="block">{headers.score ?? 'Загальний бал'}</span>
+              <span class="block text-[9.5px] text-muted/75 font-semibold normal-case tracking-normal">{headers.scoreSub ?? 'Points*'}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-line/60">
+          {ranking.items.map((item, idx) => {
+            const isFirst = item.highlight ?? (idx === 0);
+            return (
+              <tr
+                class:list={[
+                  'transition-colors duration-150',
+                  isFirst
+                    ? 'bg-purple/[0.045] hover:bg-purple/[0.08]'
+                    : 'hover:bg-slate-50/80'
+                ]}
+              >
+                {/* Column 1: University Name */}
+                <td class="py-[clamp(6px,0.9vh,10px)] px-3.5 sm:px-4">
+                  <div class="flex items-center gap-2.5">
+                    <span
+                      class:list={[
+                        'rank-num w-5.5 h-5.5 rounded-md flex items-center justify-center font-mono font-bold text-[11px] shrink-0 select-none',
+                        isFirst
+                          ? 'bg-purple text-white font-extrabold'
+                          : 'bg-slate-100 text-muted/80'
+                      ]}
+                    >
+                      {item.rank ?? (idx + 1)}
+                    </span>
+                    <div class="flex flex-col min-w-0">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span
+                          class:list={[
+                            'font-bold text-[12.5px] sm:text-[13.5px] leading-tight tracking-tight',
+                            isFirst ? 'text-ink font-extrabold' : 'text-ink'
+                          ]}
+                        >
+                          {item.name}
+                        </span>
+                        {isFirst && (
+                          <span class="inline-flex items-center text-[9.5px] uppercase font-black tracking-wider px-1.5 py-0.5 rounded bg-purple/10 text-purple border border-purple/20">
+                            #1 в Україні
+                          </span>
+                        )}
+                      </div>
+                      {item.sub && (
+                        <span class="text-[10.5px] text-muted font-normal leading-tight mt-0.5">
+                          {item.sub}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </td>
+
+                {/* Column 2: Salary (Purple Circle Badge) */}
+                <td class="py-[clamp(6px,0.9vh,10px)] px-3 text-center">
+                  <div class="inline-flex items-center justify-center">
+                    <div
+                      class:list={[
+                        'w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full flex items-center justify-center font-extrabold text-xs tracking-tight text-white',
+                        isFirst
+                          ? 'bg-purple ring-2 ring-purple/25'
+                          : 'bg-purple'
+                      ]}
+                    >
+                      {typeof item.salary === 'number' ? item.salary.toFixed(1) : item.salary}
+                    </div>
+                  </div>
+                </td>
+
+                {/* Column 3: English Level (Green Progress Bar) */}
+                <td class="py-[clamp(6px,0.9vh,10px)] px-3">
+                  <div class="w-full max-w-[180px] mx-auto bg-slate-100/90 rounded-md h-6.5 sm:h-7 p-0.5 flex items-center border border-slate-200/50">
+                    <div
+                      class:list={[
+                        'h-full rounded-[4px] flex items-center justify-center font-extrabold text-[11.5px] sm:text-xs text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.35)] tracking-tight transition-all duration-300 min-w-[40px]',
+                        isFirst ? 'bg-green ring-1 ring-green/50' : 'bg-green'
+                      ]}
+                      style={`width: ${item.english}%;`}
+                    >
+                      <span>{item.english}%</span>
+                    </div>
+                  </div>
+                </td>
+
+                {/* Column 4: Points (Dark Slate Circle Badge) */}
+                <td class="py-[clamp(6px,0.9vh,10px)] px-3 text-center">
+                  <div class="inline-flex items-center justify-center">
+                    <div
+                      class:list={[
+                        'w-8 h-8 sm:w-8.5 sm:h-8.5 rounded-full flex items-center justify-center font-extrabold text-xs tracking-tight text-white',
+                        isFirst ? 'bg-[#291636] ring-2 ring-slate-400/30' : 'bg-[#434b57]'
+                      ]}
+                    >
+                      {typeof item.score === 'number' ? item.score.toFixed(1) : item.score}
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

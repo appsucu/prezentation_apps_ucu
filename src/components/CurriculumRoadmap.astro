@@ -1,0 +1,214 @@
+---
+interface Props {
+  leaderPhoto?: string;
+  leaderRole?: string;
+  leaderName?: string;
+  leaderSub?: string;
+}
+
+const {
+  leaderPhoto = 'assets/slide8/goncharuk.jpg',
+  leaderRole = 'Керівниця програми',
+  leaderName = 'Тетяна Гончарук',
+  leaderSub = 'Факультет прикладних наук УКУ',
+} = Astro.props;
+---
+
+<div class="curriculum-container w-full md:my-auto flex flex-col gap-2.5 p-4 sm:p-5 md:p-[clamp(12px,1.8vh,24px)_clamp(14px,2vw,24px)] select-none box-border">
+  {/* 1. LinkedIn-style Profile Card for Program Leader */}
+  <div class="w-full bg-white rounded-xl border border-line overflow-hidden shadow-[0_1px_3px_rgba(15,23,42,0.05)]">
+    {/* Cover Banner */}
+    <div class="relative h-14 sm:h-16 bg-gradient-to-r from-[#291636] via-purple to-[#8e3ab0] overflow-hidden">
+      <div class="absolute -right-8 -top-10 w-32 h-32 rounded-full bg-green/25 blur-xl" aria-hidden="true"></div>
+      <div class="absolute right-3.5 top-2.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white text-[10px] font-extrabold uppercase tracking-[0.12em]">
+        <span class="w-1.5 h-1.5 rounded-full bg-green"></span>
+        <span>{leaderRole}</span>
+      </div>
+    </div>
+
+    {/* Profile Content with Overlapping Avatar */}
+    <div class="px-4 sm:px-5 pb-3.5 pt-0 flex flex-col sm:flex-row sm:items-end justify-between gap-3 relative">
+      <div class="flex items-end gap-3.5 sm:gap-4 min-w-0">
+        {/* Large Avatar */}
+        <div class="relative -mt-9 sm:-mt-10 shrink-0">
+          <img
+            src={leaderPhoto}
+            alt={leaderName}
+            class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover object-[42%_22%] border-[3.5px] border-white shadow-md bg-slate-100 block"
+          />
+          <span
+            class="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-green border-2 border-white shadow-xs"
+            aria-hidden="true"
+          ></span>
+        </div>
+
+        {/* Name, Headline & Institution */}
+        <div class="flex flex-col min-w-0 pt-1.5 pb-0.5">
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <h3 class="font-display font-extrabold text-[17px] sm:text-[19px] text-ink leading-tight tracking-tight">
+              {leaderName}
+            </h3>
+            {/* Verified / LinkedIn-style badge */}
+            <svg class="w-4 h-4 text-purple shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.5-1.5 2.6 2.6 6.4-6.4 1.5 1.5-7.9 7.9z"/>
+            </svg>
+          </div>
+          <p class="text-[12px] sm:text-[12.5px] text-ink/85 font-semibold leading-snug mt-0.5">
+            {leaderRole} «Комп’ютерні науки»
+          </p>
+          {leaderSub && (
+            <p class="text-[11px] sm:text-[11.5px] text-muted font-medium leading-tight mt-0.5">
+              <span class="truncate">{leaderSub} · Львів, Україна</span>
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {/* 2. Unified Structured Curriculum Infographic Table-Card (matching Slide 6 ranking-card) */}
+  <div class="w-full bg-white rounded-xl border border-line overflow-hidden divide-y divide-line/70">
+    {/* Table Header */}
+    <div class="bg-slate-50/90 px-3.5 sm:px-4 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="w-2 h-2 rounded-xs bg-purple shrink-0"></span>
+        <span class="text-[10.5px] font-bold text-muted uppercase tracking-[0.08em]">
+          Структура навчання за програмою
+        </span>
+      </div>
+      <span class="text-[10px] uppercase font-extrabold text-purple tracking-wider bg-purple/[0.08] border border-purple/20 px-2 py-0.5 rounded shrink-0 whitespace-nowrap">
+        F3 · 4 роки
+      </span>
+    </div>
+
+    {/* Row 1: 1–2 роки (Базова підготовка) */}
+    <div class="p-2.5 sm:p-3 bg-purple/[0.025]">
+      <div class="flex items-center justify-between gap-2 mb-1.5">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="px-1.5 h-5 rounded bg-purple text-white font-mono font-extrabold text-[11px] inline-flex items-center justify-center shrink-0 whitespace-nowrap">
+            1–2 рік
+          </span>
+          <span class="font-bold text-[12.5px] sm:text-[13px] text-ink tracking-tight leading-snug">
+            Міцний фундамент
+          </span>
+        </div>
+        <span class="text-[9.5px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-purple/10 text-purple border border-purple/20 shrink-0 whitespace-nowrap hidden xl:inline-block">
+          Базова підготовка
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-1.5">
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white border border-line/80 text-[11px] sm:text-[11.5px] text-[#3b424e] leading-snug">
+          <span class="w-1.5 h-1.5 rounded-full bg-purple shrink-0"></span>
+          <span><strong class="font-bold text-ink">Вища математика</strong> та дискретні структури</span>
+        </div>
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white border border-line/80 text-[11px] sm:text-[11.5px] text-[#3b424e] leading-snug">
+          <span class="w-1.5 h-1.5 rounded-full bg-purple shrink-0"></span>
+          <span><strong class="font-bold text-ink">Мови C++, Python</strong>, парадигми ООП</span>
+        </div>
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white border border-line/80 text-[11px] sm:text-[11.5px] text-[#3b424e] leading-snug">
+          <span class="w-1.5 h-1.5 rounded-full bg-purple shrink-0"></span>
+          <span><strong class="font-bold text-ink">Алгоритми</strong>, структури даних та ОС</span>
+        </div>
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white border border-line/80 text-[11px] sm:text-[11.5px] text-[#3b424e] leading-snug">
+          <span class="w-1.5 h-1.5 rounded-full bg-purple shrink-0"></span>
+          <span><strong class="font-bold text-ink">Архітектура</strong> та організація комп’ютера</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Row 2: 3–4 роки (Спеціалізація) */}
+    <div class="p-2.5 sm:p-3 bg-white">
+      <div class="flex items-center justify-between gap-2 mb-1.5">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="px-1.5 h-5 rounded bg-green text-ink font-mono font-extrabold text-[11px] inline-flex items-center justify-center shrink-0 whitespace-nowrap">
+            3–4 рік
+          </span>
+          <span class="font-bold text-[12.5px] sm:text-[13px] text-ink tracking-tight leading-snug">
+            Власна освітня траєкторія
+          </span>
+        </div>
+        <span class="text-[9.5px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-green/15 text-[#32570a] border border-green/30 shrink-0 whitespace-nowrap hidden xl:inline-block">
+          Спеціалізація
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-1.5">
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-50/70 border border-line/80 text-[11px] sm:text-[11.5px] text-[#3b424e] leading-snug">
+          <span class="w-1.5 h-1.5 rounded-full bg-green shrink-0"></span>
+          <span><strong class="font-bold text-ink">Штучний інтелект</strong> &amp; Data Science</span>
+        </div>
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-50/70 border border-line/80 text-[11px] sm:text-[11.5px] text-[#3b424e] leading-snug">
+          <span class="w-1.5 h-1.5 rounded-full bg-green shrink-0"></span>
+          <span><strong class="font-bold text-ink">Software Engineering</strong> &amp; хмарні сервіси</span>
+        </div>
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-50/70 border border-line/80 text-[11px] sm:text-[11.5px] text-[#3b424e] leading-snug">
+          <span class="w-1.5 h-1.5 rounded-full bg-green shrink-0"></span>
+          <span><strong class="font-bold text-ink">Вибіркові курси</strong> під власний фокус</span>
+        </div>
+        <div class="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-slate-50/70 border border-line/80 text-[11px] sm:text-[11.5px] text-[#3b424e] leading-snug">
+          <span class="w-1.5 h-1.5 rounded-full bg-green shrink-0"></span>
+          <span><strong class="font-bold text-ink">Дипломний проєкт</strong> та дослідження</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Row 3: По дорозі (Наскрізний практичний досвід) */}
+    <div class="p-2.5 sm:p-3 bg-slate-50/60">
+      <div class="flex items-center justify-between gap-2 mb-1.5">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="w-5 h-5 rounded bg-purple/10 text-purple font-extrabold text-xs inline-flex items-center justify-center shrink-0">
+            ↗
+          </span>
+          <span class="font-bold text-[12px] sm:text-[12.5px] text-ink uppercase tracking-[0.06em]">
+            По дорозі · практичний досвід
+          </span>
+        </div>
+        <span class="text-[9.5px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-slate-200/70 text-muted shrink-0 whitespace-nowrap hidden xl:inline-block">
+          1–4 курс
+        </span>
+      </div>
+
+      <div class="flex flex-wrap gap-1.5">
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-line bg-white text-ink text-[11.5px] font-semibold">
+          <svg class="w-3 h-3 text-purple shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          <span>Власні проєкти</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-line bg-white text-ink text-[11.5px] font-semibold">
+          <svg class="w-3 h-3 text-purple shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span>Дослідження</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-line bg-white text-ink text-[11.5px] font-semibold">
+          <svg class="w-3 h-3 text-[#32570a] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+          </svg>
+          <span>Стажування в IT</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-line bg-white text-ink text-[11.5px] font-semibold">
+          <svg class="w-3 h-3 text-muted shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" y1="12" x2="22" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <span>Міжнародні обміни</span>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-line bg-white text-ink text-[11.5px] font-semibold">
+          <svg class="w-3 h-3 text-purple shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+            <path d="M4 22h16"/>
+            <path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"/>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+          </svg>
+          <span>Змагання &amp; хакатони</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

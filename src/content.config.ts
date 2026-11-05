@@ -48,10 +48,25 @@ const slides = defineCollection({
       .optional(),
     links: z.array(z.strictObject({ label: z.string(), url: z.url() })).optional(),
     logos: z.array(assetPath).optional(),
+    research: z
+      .strictObject({
+        heading: z.string().optional(),
+        chips: z.array(
+          z.union([
+            z.string(),
+            z
+              .strictObject({ text: z.string().optional(), logo: assetPath.optional() })
+              .refine((o) => o.text || o.logo, 'чіп потребує text або logo'),
+          ]),
+        ),
+        logos: z.array(assetPath).optional(),
+      })
+      .optional(),
     note: z.string().optional(),
     credit: z.string().optional(),
     image: z.union([assetPath, z.array(assetPath)]).optional(),
     fit: z.literal('contain').optional(),
+    layout: z.enum(['stack']).optional(),
     pin: z
       .strictObject({
         label: z.string(),
@@ -62,6 +77,33 @@ const slides = defineCollection({
         x: z.number().min(0).max(1),
         y: z.number().min(0).max(1),
         ar: z.number().positive(),
+      })
+      .optional(),
+    ranking: z
+      .strictObject({
+        highlights: z.array(z.string()).optional(),
+        headers: z
+          .strictObject({
+            name: z.string().optional(),
+            salary: z.string().optional(),
+            salarySub: z.string().optional(),
+            english: z.string().optional(),
+            englishSub: z.string().optional(),
+            score: z.string().optional(),
+            scoreSub: z.string().optional(),
+          })
+          .optional(),
+        items: z.array(
+          z.strictObject({
+            rank: z.number().optional(),
+            name: z.string(),
+            sub: z.string().optional(),
+            salary: z.union([z.number(), z.string()]),
+            english: z.number(),
+            score: z.union([z.number(), z.string()]),
+            highlight: z.boolean().optional(),
+          })
+        ),
       })
       .optional(),
     page: z.int().positive().optional(),
