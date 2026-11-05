@@ -66,7 +66,7 @@ const slides = defineCollection({
     credit: z.string().optional(),
     image: z.union([assetPath, z.array(assetPath)]).optional(),
     fit: z.literal('contain').optional(),
-    layout: z.enum(['stack']).optional(),
+    layout: z.enum(['stack', 'center']).optional(),
     pin: z
       .strictObject({
         label: z.string(),
