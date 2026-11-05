@@ -668,14 +668,20 @@
 
 /* ── Centered Hero Slide (Slide 29: Photo Background + Centered Composition) ── */
 .hero.hero-center .slide-image>img {
-  object-position: center 30%;
+  object-position: center 35%;
+}
+
+@media (max-width: 767px) {
+  .hero.hero-center .slide-image>img {
+    object-position: 42% 45%;
+  }
 }
 
 .hero.hero-center .slide-image:after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(20, 10, 32, 0.74) 0%, rgba(14, 16, 28, 0.84) 48%, rgba(10, 12, 20, 0.90) 100%);
+  background: linear-gradient(180deg, rgba(20, 10, 32, 0.58) 0%, rgba(14, 16, 28, 0.68) 48%, rgba(10, 12, 20, 0.76) 100%);
   pointer-events: none;
 }
 
